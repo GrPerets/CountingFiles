@@ -13,6 +13,8 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.jnativehook.GlobalScreen;
+import org.jnativehook.NativeHookException;
 
 /**
  *
@@ -58,7 +60,7 @@ public class CountingFilesMain {
             for(String path:lines){
                 
                     counter = new Counter(new InfoDir(path),output);
-                    //GlobalScreen.addNativeKeyListener(counter);
+                    GlobalScreen.addNativeKeyListener(counter);
                     thread = new Thread(counter,"path");
                     thread.start();
                     
@@ -71,10 +73,10 @@ public class CountingFilesMain {
             System.exit(0);
         }
         
-        /*
+        
         try {
-			//GlobalScreen.registerNativeHook();
-                        GlobalScreen.unregisterNativeHook();
+			GlobalScreen.registerNativeHook();
+                       // GlobalScreen.unregisterNativeHook();
 		}
 		catch (NativeHookException ex) {
 			System.err.println("There was a problem registering the native hook.");
@@ -83,7 +85,7 @@ public class CountingFilesMain {
 			System.exit(1);
 		}
 
-		*/
+		
     }
     
 }

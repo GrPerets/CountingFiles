@@ -34,21 +34,8 @@ public class Counter implements Runnable, NativeKeyListener{
     public Counter(InfoDir infoDir, Path output) {
         this.infoDir = infoDir;
         this.output = output;
-        //this.thread = new Thread(this);
-        //this.thread.start();
-        
-        try {
-			GlobalScreen.registerNativeHook();
-                        //GlobalScreen.unregisterNativeHook();
-		}
-		catch (NativeHookException ex) {
-			System.err.println("There was a problem registering the native hook.");
-			System.err.println(ex.getMessage());
-
-			System.exit(1);
-		}
-        GlobalScreen.addNativeKeyListener(this);
-        
+        new Thread(this).start();
+                
     }
     
     
@@ -109,9 +96,7 @@ public class Counter implements Runnable, NativeKeyListener{
     public void nativeKeyPressed(NativeKeyEvent e) {
 		if (e.getKeyCode() == NativeKeyEvent.VC_ESCAPE) {
                     Thread.currentThread().interrupt();
-                    //System.out.println(thread.isInterrupted()+thread.getName());
-                    //System.exit(0);
-                    
+                                        
                     try {
                         GlobalScreen.unregisterNativeHook();
                         
