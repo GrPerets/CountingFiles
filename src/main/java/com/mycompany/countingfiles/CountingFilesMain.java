@@ -34,8 +34,8 @@ public class CountingFilesMain {
         Path input=null;
         Path output=null;
         try {
-            input = Paths.get("C:\\Users\\user\\Documents\\NetBeansProjects",args[0]);
-            output = Paths.get("C:\\Users\\user\\Documents\\NetBeansProjects",args[1]);
+            input = Paths.get("C:\\Users\\grperets\\Documents\\NetBeansProjects",args[0]);
+            output = Paths.get("C:\\Users\\grperets\\Documents\\NetBeansProjects",args[1]);
         }
         catch (InvalidPathException ex){
             Logger.getLogger(CountingFilesMain.class.getName()).log(Level.SEVERE, null, ex);
