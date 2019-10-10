@@ -32,6 +32,6 @@ public class InfoDir {
     
     @Override
     public String toString(){
-        return String.format("%6d|%s",numberOfFiles,path);
+        return String.format("%7d|%s",numberOfFiles,path);
     }
 }
