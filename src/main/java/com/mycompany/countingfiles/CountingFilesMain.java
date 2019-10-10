@@ -12,6 +12,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.logging.Level;
+import java.util.logging.LogManager;
 import java.util.logging.Logger;
 import org.jnativehook.GlobalScreen;
 import org.jnativehook.NativeHookException;
@@ -61,18 +62,19 @@ public class CountingFilesMain {
                 
                     counter = new Counter(new InfoDir(path),output);
                     GlobalScreen.addNativeKeyListener(counter);
-                    thread = new Thread(counter,"path");
-                    thread.start();
-                    
-                    
-                    //    counter.run();
-                
+                                    
             }
         } else {
             System.out.println("В исходном файле отсутствуют пути каталогов");
             System.exit(0);
         }
         
+        //Очистить предыдущие конфигурации ведения журнала.
+LogManager.getLogManager().reset();
+
+//Получить регистратор для "org.jnativehook" и отключить уровень.
+Logger logger = Logger.getLogger(GlobalScreen.class.getPackage().getName());
+logger.setLevel(Level.OFF);
         
         try {
 			GlobalScreen.registerNativeHook();
