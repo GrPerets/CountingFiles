@@ -32,19 +32,22 @@ public class CountingFilesMain {
             System.exit(0);
         }
                 
-        
+        //"C:\\Users\\grperets\\Documents\\NetBeansProjects",
+        //"C:\\Users\\grperets\\Documents\\NetBeansProjects",
         
         Path input=null;
         Path output=null;
         try {
-            input = Paths.get("C:\\Users\\grperets\\Documents\\NetBeansProjects",args[0]);
-            output = Paths.get("C:\\Users\\grperets\\Documents\\NetBeansProjects",args[1]);
+            input = Paths.get("..",args[0]);
+            output = Paths.get("..",args[1]);
         }
         catch (InvalidPathException ex){
             Logger.getLogger(CountingFilesMain.class.getName()).log(Level.SEVERE, null, ex);
         }               
           
         List<String> lines = null;
+        
+        //Удалить исходящий файл, если существует. Создать новый.
         try {
             if (Files.deleteIfExists(output)){
                 Files.createFile(output);
@@ -56,7 +59,7 @@ public class CountingFilesMain {
         }
         
        
-        //Спам логи jnativehook
+        //Спам логи jnativehook отключение
         //Очистить предыдущие конфигурации ведения журнала.
         LogManager.getLogManager().reset();
 
