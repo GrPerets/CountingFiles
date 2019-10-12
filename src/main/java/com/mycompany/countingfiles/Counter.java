@@ -45,29 +45,15 @@ public class Counter implements Runnable, NativeKeyListener{
     
     @Override
     public void run() {
-        System.out.println(Thread.currentThread().getName());
         while (!Thread.currentThread().isInterrupted()){
-             
             try {
-            Files.walkFileTree(Paths.get(infoDir.getPath()), new SimpleFileVisitor<Path>(){ 
+                Files.walkFileTree(Paths.get(infoDir.getPath()), new SimpleFileVisitor<Path>(){ 
                     @Override
                     public FileVisitResult preVisitDirectory(Path path, BasicFileAttributes attrs) throws IOException {
 
                         if(Thread.currentThread().isInterrupted()){
-                            /*
-                            try {
-                                GlobalScreen.unregisterNativeHook();
-                            } 
-                            catch (NativeHookException ex) {
-                                Logger.getLogger(Counter.class.getName()).log(Level.SEVERE, null, ex);
-                            } */
-
-                           System.out.println("pre directory "+Thread.currentThread().isInterrupted());
-
                             return FileVisitResult.TERMINATE;
                         }
-                        //System.out.println("pre directory "+Thread.currentThread().isInterrupted());
-                        //Thread.currentThread().interrupt();
                         return FileVisitResult.CONTINUE;
                     }
 
@@ -75,16 +61,6 @@ public class Counter implements Runnable, NativeKeyListener{
                     public FileVisitResult visitFile(Path path, BasicFileAttributes attrs){
                         if (attrs.isRegularFile()){
                            infoDir.addFile();
-                        }
-                        if(Thread.currentThread().isInterrupted()){
-                            /*
-                            try {
-                                GlobalScreen.unregisterNativeHook();
-                            } 
-                            catch (NativeHookException ex) {
-                                Logger.getLogger(Counter.class.getName()).log(Level.SEVERE, null, ex);
-                            } */
-                            return FileVisitResult.TERMINATE;
                         }
                         return FileVisitResult.CONTINUE;
                     }
@@ -103,7 +79,6 @@ public class Counter implements Runnable, NativeKeyListener{
                 );
             }
             catch (IOException | InvalidPathException ex) {
-                System.out.println("ошибка завершение");
                 Logger.getLogger(Counter.class.getName()).log(Level.SEVERE, null, ex);
             }
 
@@ -120,8 +95,6 @@ public class Counter implements Runnable, NativeKeyListener{
 
                 }
                 Thread.currentThread().interrupt();
-                
-                System.out.println("final "+Thread.currentThread().isInterrupted());
             }
         }
         /*
@@ -135,11 +108,8 @@ public class Counter implements Runnable, NativeKeyListener{
     @Override
     public void nativeKeyPressed(NativeKeyEvent e) {
 		if (e.getKeyCode() == NativeKeyEvent.VC_ESCAPE) {
-                   System.out.println("befor esc "+thread.getName()+" "+thread.isInterrupted()); 
                     thread.interrupt();
-                   System.out.println("after esc "+thread.isInterrupted());                     
-                   
-                   try {
+                    try {
                        GlobalScreen.unregisterNativeHook();
                         
                     } catch (NativeHookException ex) {
