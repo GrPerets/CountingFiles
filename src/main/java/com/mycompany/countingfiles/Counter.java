@@ -13,6 +13,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import static java.nio.file.StandardOpenOption.APPEND;
+import static java.nio.file.StandardOpenOption.CREATE;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -29,76 +30,117 @@ public class Counter implements Runnable, NativeKeyListener{
     private final InfoDir infoDir;
     private final Path output;
     private Thread thread;
-    private static int id=1;
+    private static int id = 1;
     
     public Counter(InfoDir infoDir, Path output) {
         this.infoDir = infoDir;
         this.output = output;
-        new Thread(this).start();
+        thread = new Thread(this);
+        thread.start();
+        GlobalScreen.addNativeKeyListener(this);
+        
                 
     }
     
     
     @Override
     public void run() {
-        while (!Thread.currentThread().isInterrupted())
-            
-        try {
-        Files.walkFileTree(Paths.get(infoDir.getPath()), new SimpleFileVisitor<Path>(){ 
-                @Override
-                public FileVisitResult preVisitDirectory(Path path, BasicFileAttributes attrs) throws IOException {
-                    return FileVisitResult.CONTINUE;
-                }
-                
-                @Override
-                public FileVisitResult visitFile(Path path, BasicFileAttributes attrs){
-                    if (attrs.isRegularFile()){
-                       infoDir.addFile();
-                    }
-                    return FileVisitResult.CONTINUE;
-                }
-                
-                @Override
-                public FileVisitResult postVisitDirectory(Path path, IOException exc){
-                    return FileVisitResult.CONTINUE;
-                }
-                
-                @Override
-                public FileVisitResult visitFileFailed(Path path, IOException exc) throws IOException {
-                    return FileVisitResult.CONTINUE;
-                }
-                
-            }
-            );
-        }
-        catch (IOException | InvalidPathException ex){
-            Logger.getLogger(Counter.class.getName()).log(Level.SEVERE, null, ex);
-        }
-                
-        finally {
-            
-            String formStr = String.format("|%3d|%s",id++,infoDir);
-            System.out.println(formStr);
-                
+        System.out.println(Thread.currentThread().getName());
+        while (!Thread.currentThread().isInterrupted()){
+             
             try {
-                Files.write(output,String.format("%s%s%d%n",infoDir.getPath(),";",infoDir.getNumberOfFiles()).getBytes(),APPEND);
+            Files.walkFileTree(Paths.get(infoDir.getPath()), new SimpleFileVisitor<Path>(){ 
+                    @Override
+                    public FileVisitResult preVisitDirectory(Path path, BasicFileAttributes attrs) throws IOException {
+
+                        if(Thread.currentThread().isInterrupted()){
+                            /*
+                            try {
+                                GlobalScreen.unregisterNativeHook();
+                            } 
+                            catch (NativeHookException ex) {
+                                Logger.getLogger(Counter.class.getName()).log(Level.SEVERE, null, ex);
+                            } */
+
+                           System.out.println("pre directory "+Thread.currentThread().isInterrupted());
+
+                            return FileVisitResult.TERMINATE;
+                        }
+                        //System.out.println("pre directory "+Thread.currentThread().isInterrupted());
+                        //Thread.currentThread().interrupt();
+                        return FileVisitResult.CONTINUE;
+                    }
+
+                    @Override
+                    public FileVisitResult visitFile(Path path, BasicFileAttributes attrs){
+                        if (attrs.isRegularFile()){
+                           infoDir.addFile();
+                        }
+                        if(Thread.currentThread().isInterrupted()){
+                            /*
+                            try {
+                                GlobalScreen.unregisterNativeHook();
+                            } 
+                            catch (NativeHookException ex) {
+                                Logger.getLogger(Counter.class.getName()).log(Level.SEVERE, null, ex);
+                            } */
+                            return FileVisitResult.TERMINATE;
+                        }
+                        return FileVisitResult.CONTINUE;
+                    }
+
+                    @Override
+                    public FileVisitResult postVisitDirectory(Path path, IOException exc){
+                        return FileVisitResult.CONTINUE;
+                    }
+
+                    @Override
+                    public FileVisitResult visitFileFailed(Path path, IOException exc) throws IOException {
+                        return FileVisitResult.SKIP_SUBTREE;
+                    }
+
+                }
+                );
             }
-            catch (IOException ex) {
+            catch (IOException | InvalidPathException ex) {
+                System.out.println("ошибка завершение");
                 Logger.getLogger(Counter.class.getName()).log(Level.SEVERE, null, ex);
-                
             }
-            Thread.currentThread().interrupt();
+
+            finally {
+
+                String formStr = String.format("|%3d|%s",id++,infoDir);
+                System.out.println(formStr);
+
+                try {
+                    Files.write(output,String.format("%s%s%d%n",infoDir.getPath(),";",infoDir.getNumberOfFiles()).getBytes(),CREATE,APPEND);
+                }
+                catch (IOException ex) {
+                    Logger.getLogger(Counter.class.getName()).log(Level.SEVERE, null, ex);
+
+                }
+                Thread.currentThread().interrupt();
+                
+                System.out.println("final "+Thread.currentThread().isInterrupted());
+            }
         }
-               
+        /*
+            try {
+                GlobalScreen.unregisterNativeHook();
+            } catch (NativeHookException ex) {
+                Logger.getLogger(Counter.class.getName()).log(Level.SEVERE, null, ex);
+            }     */
     }
 
     @Override
     public void nativeKeyPressed(NativeKeyEvent e) {
 		if (e.getKeyCode() == NativeKeyEvent.VC_ESCAPE) {
-                    Thread.currentThread().interrupt();
-                                        
-                    try {
-                        GlobalScreen.unregisterNativeHook();
+                   System.out.println("befor esc "+thread.getName()+" "+thread.isInterrupted()); 
+                    thread.interrupt();
+                   System.out.println("after esc "+thread.isInterrupted());                     
+                   
+                   try {
+                       GlobalScreen.unregisterNativeHook();
                         
                     } catch (NativeHookException ex) {
                         Logger.getLogger(Counter.class.getName()).log(Level.SEVERE, null, ex);
