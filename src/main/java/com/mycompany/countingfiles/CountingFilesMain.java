@@ -87,7 +87,7 @@ public class CountingFilesMain {
                     thread = new Thread(counter);
                     thread.start();
                 try {
-                    thread.join();
+                    counter.thread.join();
                 } catch (InterruptedException ex) {
                     Logger.getLogger(CountingFilesMain.class.getName()).log(Level.SEVERE, null, ex);
                 }*/

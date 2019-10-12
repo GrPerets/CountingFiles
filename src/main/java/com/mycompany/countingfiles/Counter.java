@@ -29,7 +29,7 @@ import org.jnativehook.keyboard.NativeKeyListener;
 public class Counter implements Runnable, NativeKeyListener{
     private final InfoDir infoDir;
     private final Path output;
-    private Thread thread;
+    Thread thread;
     private static int id = 1;
     
     public Counter(InfoDir infoDir, Path output) {
