@@ -28,13 +28,11 @@ public class CountingFilesMain {
      */
     public static void main(String[] args) {
         if(args.length!=2){
-            System.out.println("Запустите приложение используя формат: CountingFiles paths.txt results.txt");
+            System.out.println("Запустите приложение используя формат: countingfiles paths.txt results.txt");
             System.exit(0);
         }
                 
-        //"C:\\Users\\grperets\\Documents\\NetBeansProjects",
-        //"C:\\Users\\grperets\\Documents\\NetBeansProjects",
-        
+                
         Path input=null;
         Path output=null;
         try {
@@ -47,7 +45,7 @@ public class CountingFilesMain {
           
         List<String> lines = null;
         
-        //Удалить исходящий файл, если существует. Создать новый.
+        //Удалить файл результатов, если существует. Создать новый.
         try {
             if (Files.deleteIfExists(output)){
                 Files.createFile(output);
@@ -67,7 +65,12 @@ public class CountingFilesMain {
         Logger logger = Logger.getLogger(GlobalScreen.class.getPackage().getName());
         logger.setLevel(Level.OFF);
         
-        try {
+        if((lines!=null)&&(!lines.isEmpty())) {
+            System.out.println("Press ESC to exit");
+            for(String path:lines){
+                new Counter(new InfoDir(path),output);
+            }
+            try {
 			GlobalScreen.registerNativeHook();
                        // GlobalScreen.unregisterNativeHook();
 		}
@@ -77,39 +80,11 @@ public class CountingFilesMain {
 
 			System.exit(1);
 		}
-        
-        
-        
-        Counter counter=null;
-        Thread thread;
-        if(lines!=null){
-            for(String path:lines){
-                
-                    counter = new Counter(new InfoDir(path),output);
-                   /*
-                    thread = new Thread(counter);
-                    thread.start();
-                try {
-                    counter.thread.join();
-                } catch (InterruptedException ex) {
-                    Logger.getLogger(CountingFilesMain.class.getName()).log(Level.SEVERE, null, ex);
-                }*/
-                                                       
-            }
+            
         } else {
-            System.out.println("В исходном файле отсутствуют пути каталогов");
-            System.exit(0);
+            System.out.println("Недоступен исходный файл или отсутствуют пути каталогов");
         }
-        System.out.println("Press ESC for exit");
-        /*
-        try {
-            GlobalScreen.unregisterNativeHook();
-        } catch (NativeHookException ex) {
-            Logger.getLogger(CountingFilesMain.class.getName()).log(Level.SEVERE, null, ex);
-        }*/
-        
-                
-		
+    
     }
     
 }

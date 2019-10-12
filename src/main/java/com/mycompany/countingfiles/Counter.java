@@ -29,7 +29,7 @@ import org.jnativehook.keyboard.NativeKeyListener;
 public class Counter implements Runnable, NativeKeyListener{
     private final InfoDir infoDir;
     private final Path output;
-    Thread thread;
+    private Thread thread;
     private static int id = 1;
     
     public Counter(InfoDir infoDir, Path output) {
@@ -45,13 +45,13 @@ public class Counter implements Runnable, NativeKeyListener{
     
     @Override
     public void run() {
-        while (!Thread.currentThread().isInterrupted()){
+        while (!thread.isInterrupted()){
             try {
                 Files.walkFileTree(Paths.get(infoDir.getPath()), new SimpleFileVisitor<Path>(){ 
                     @Override
                     public FileVisitResult preVisitDirectory(Path path, BasicFileAttributes attrs) throws IOException {
 
-                        if(Thread.currentThread().isInterrupted()){
+                        if(thread.isInterrupted()){
                             return FileVisitResult.TERMINATE;
                         }
                         return FileVisitResult.CONTINUE;
@@ -84,25 +84,20 @@ public class Counter implements Runnable, NativeKeyListener{
 
             finally {
 
-                String formStr = String.format("|%3d|%s",id++,infoDir);
-                System.out.println(formStr);
+                System.out.printf("|%3d|%s%n",id++,infoDir);
 
                 try {
                     Files.write(output,String.format("%s%s%d%n",infoDir.getPath(),";",infoDir.getNumberOfFiles()).getBytes(),CREATE,APPEND);
+                        
                 }
                 catch (IOException ex) {
                     Logger.getLogger(Counter.class.getName()).log(Level.SEVERE, null, ex);
 
                 }
-                Thread.currentThread().interrupt();
+                thread.interrupt();
             }
         }
-        /*
-            try {
-                GlobalScreen.unregisterNativeHook();
-            } catch (NativeHookException ex) {
-                Logger.getLogger(Counter.class.getName()).log(Level.SEVERE, null, ex);
-            }     */
+        
     }
 
     @Override
