@@ -55,26 +55,14 @@ public class CountingFilesMain {
             Logger.getLogger(CountingFilesMain.class.getName()).log(Level.SEVERE, null, ex);
         }
         
-        Counter counter=null;
-        Thread thread;
-        if(lines!=null){
-            for(String path:lines){
-                
-                    counter = new Counter(new InfoDir(path),output);
-                    GlobalScreen.addNativeKeyListener(counter);
-                                    
-            }
-        } else {
-            System.out.println("В исходном файле отсутствуют пути каталогов");
-            System.exit(0);
-        }
-        
+       
+        //Спам логи jnativehook
         //Очистить предыдущие конфигурации ведения журнала.
-LogManager.getLogManager().reset();
+        LogManager.getLogManager().reset();
 
-//Получить регистратор для "org.jnativehook" и отключить уровень.
-Logger logger = Logger.getLogger(GlobalScreen.class.getPackage().getName());
-logger.setLevel(Level.OFF);
+        //Получить регистратор для "org.jnativehook" и отключить уровень.
+        Logger logger = Logger.getLogger(GlobalScreen.class.getPackage().getName());
+        logger.setLevel(Level.OFF);
         
         try {
 			GlobalScreen.registerNativeHook();
@@ -86,7 +74,37 @@ logger.setLevel(Level.OFF);
 
 			System.exit(1);
 		}
-
+        
+        
+        
+        Counter counter=null;
+        Thread thread;
+        if(lines!=null){
+            for(String path:lines){
+                
+                    counter = new Counter(new InfoDir(path),output);
+                   /*
+                    thread = new Thread(counter);
+                    thread.start();
+                try {
+                    thread.join();
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(CountingFilesMain.class.getName()).log(Level.SEVERE, null, ex);
+                }*/
+                                                       
+            }
+        } else {
+            System.out.println("В исходном файле отсутствуют пути каталогов");
+            System.exit(0);
+        }
+        /*
+        try {
+            GlobalScreen.unregisterNativeHook();
+        } catch (NativeHookException ex) {
+            Logger.getLogger(CountingFilesMain.class.getName()).log(Level.SEVERE, null, ex);
+        }*/
+        
+                
 		
     }
     
