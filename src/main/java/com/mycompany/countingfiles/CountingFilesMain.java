@@ -38,8 +38,8 @@ public class CountingFilesMain {
         Path input=null;
         Path output=null;
         try {
-            input = Paths.get("..",args[0]);
-            output = Paths.get("..",args[1]);
+            input = Paths.get(args[0]);
+            output = Paths.get(args[1]);
         }
         catch (InvalidPathException ex){
             Logger.getLogger(CountingFilesMain.class.getName()).log(Level.SEVERE, null, ex);
@@ -100,6 +100,7 @@ public class CountingFilesMain {
             System.out.println("В исходном файле отсутствуют пути каталогов");
             System.exit(0);
         }
+        System.out.println("Press ESC for exit");
         /*
         try {
             GlobalScreen.unregisterNativeHook();
